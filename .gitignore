@@ -1,0 +1,7 @@
+build/
+__pycache__/
+.DS_Store
+
+# Local design notes and screenshots can contain real chat data.
+/DESIGN.md
+/docs/

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cost-calculator",
+  "version": "0.7.8",
+  "description": "Token usage by project and parent chat, with account allowance and reset times.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Token Usage",
+        "shortDescription": "Tokens across chats and subagents",
+        "longDescription": "See chats grouped by project with recorded token subtotals for the last day, week, month, or all recorded time, including all linked task subagents. View the signed-in Codex account’s remaining allowance and reset times. Open a chat for individual token breakdowns, model, reasoning effort, and last recorded activity. Independent of ChatGPT Stats.",
+        "defaultPrompt": [
+          "Open Token Usage."
+        ],
+        "brandColor": "#3665C8",
+        "composerIcon": "./assets/icon.svg"
+      },
+      "requires_local_executor": true
+    }
+  }
+}

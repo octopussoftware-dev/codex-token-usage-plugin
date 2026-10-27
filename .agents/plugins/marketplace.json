@@ -1,0 +1,20 @@
+{
+  "name": "cost-calculator-local",
+  "interface": {
+    "displayName": "Token Usage"
+  },
+  "plugins": [
+    {
+      "name": "cost-calculator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cost-calculator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

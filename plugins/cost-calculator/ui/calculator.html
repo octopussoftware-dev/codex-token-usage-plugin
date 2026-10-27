@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Token Usage</title>
+<style>
+:root { color-scheme:light dark; --bg:#fafbfc; --surface:#fff; --text:#202632; --muted:#75808e; --line:#e3e7ed; --soft:#f0f3f8; --accent:#3665c8; --tint:#e9effb; --warn:#a66b19; }
+@media(prefers-color-scheme:dark) { :root { --bg:#171a20; --surface:#1e232c; --text:#e7ebf2; --muted:#9aa4b3; --line:#303640; --soft:#252d39; --accent:#88adff; --tint:#263450; --warn:#e1b470; } }
+:root[data-theme="light"] { color-scheme:light; --bg:#fafbfc; --surface:#fff; --text:#202632; --muted:#75808e; --line:#e3e7ed; --soft:#f0f3f8; --accent:#3665c8; --tint:#e9effb; --warn:#a66b19; }
+:root[data-theme="dark"] { color-scheme:dark; --bg:#171a20; --surface:#1e232c; --text:#e7ebf2; --muted:#9aa4b3; --line:#303640; --soft:#252d39; --accent:#88adff; --tint:#263450; --warn:#e1b470; }
+* { box-sizing:border-box; } [hidden] { display:none!important; }
+body { margin:0; background:var(--bg); color:var(--text); font:13px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+button,input { font:inherit; color:inherit; } button { cursor:pointer; border:0; background:none; } button:disabled { opacity:.45; cursor:default; }
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+main { max-width:1020px; margin:auto; padding:24px 26px 18px; }
+.toolbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.actions { display:flex; align-items:center; gap:12px; margin-left:auto; }.live { color:var(--muted); display:flex; gap:5px; align-items:center; font-size:11px; white-space:nowrap; }.live input { accent-color:var(--accent); margin:0; }
+.refresh { display:flex; border:1px solid var(--line); background:var(--surface); padding:7px; border-radius:7px; }.refresh:hover { background:var(--soft); }.busy svg { animation:spin 1s linear infinite; }
+.period-picker { display:flex; gap:3px; }.period-picker button { padding:6px 10px; border-radius:6px; font-size:12px; color:var(--muted); }.period-picker button:hover { background:var(--soft); }.period-picker button[aria-pressed="true"] { background:var(--tint); color:var(--accent); font-weight:600; }
+.hero { padding:22px 0 24px; }.kicker { font-size:11px; color:var(--muted); }.value { margin:4px 0 5px; font-size:46px; font-weight:580; letter-spacing:-1.7px; line-height:1.15; font-variant-numeric:tabular-nums; }.hero-note { color:var(--muted); font-size:11px; }.partial { color:var(--warn); }
+.value-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; }.comparison { display:block; margin-top:3px; font-size:10px; font-weight:500; line-height:1.4; letter-spacing:0; color:var(--muted); font-variant-numeric:tabular-nums; }.comparison.up,.comparison.down { color:var(--accent); }.comparison small { display:block; font-size:10px; font-weight:400; color:var(--muted); }.value-row .comparison { margin:0; font-size:13px; }.value-row .comparison small { margin-top:2px; }
+.hero-top { display:flex; align-items:center; justify-content:space-between; gap:20px; }.hero-primary { min-width:0; }#total-change small { display:none; }.allowance { flex:none; max-width:160px; min-height:52px; padding:3px 0 3px 20px; border-inline-start:1px solid var(--line); display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:4px; color:var(--muted); text-align:right; }.allowance-windows { display:grid; gap:12px; }.allowance-window { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }.allowance-window strong { color:var(--accent); font-size:21px; line-height:1.15; font-weight:550; letter-spacing:-.4px; white-space:nowrap; font-variant-numeric:tabular-nums; }.allowance-label { font-size:10px; line-height:1.4; overflow-wrap:anywhere; }.allowance-status,.allowance-note { font-size:10px; }.allowance-note { margin:0; }.allowance.stale .allowance-status { color:var(--warn); }.allowance.stale strong { color:var(--muted); }
+.search { display:flex; align-items:center; gap:9px; padding:12px 0; border-block:1px solid var(--line); color:var(--muted); }.search input { border:0; background:none; width:100%; min-width:0; outline:0; padding:2px; }.search input::placeholder { color:var(--muted); }
+.list-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:17px 0 3px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.7px; }.group-toggle { display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:11px; text-transform:none; letter-spacing:normal; white-space:nowrap; }.group-toggle input { margin:0; accent-color:var(--accent); }
+.sort-picker { display:inline-flex; flex:none; gap:2px; padding:3px; margin-left:auto; border-radius:8px; background:var(--soft); text-transform:none; letter-spacing:normal; }.sort-picker button { padding:6px 9px; border-radius:5px; font-size:11px; line-height:1.4; color:var(--muted); white-space:nowrap; }.sort-picker button:hover { color:var(--text); }.sort-picker button[aria-pressed="true"] { background:var(--surface); color:var(--accent); font-weight:600; box-shadow:0 1px 3px #0000000d; }.list-summary { margin:9px 0 2px; font-size:10px; color:var(--muted); }.list-summary.partial { color:var(--warn); }.ranking-note { margin:5px 0 2px; font-size:10px; color:var(--muted); }
+.list-frame { position:relative; }
+#chat-list { max-height:350px; overflow:auto; scrollbar-gutter:stable; padding-right:8px; scroll-padding-block:70px 40px; }
+#chat-list:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+#chat-list::-webkit-scrollbar { width:6px; background:transparent; }#chat-list::-webkit-scrollbar-track,#chat-list::-webkit-scrollbar-thumb { background:transparent; border-radius:3px; }
+.list-frame:hover #chat-list::-webkit-scrollbar-track,.list-frame:focus-within #chat-list::-webkit-scrollbar-track { background:var(--soft); }
+.list-frame:hover #chat-list::-webkit-scrollbar-thumb,.list-frame:focus-within #chat-list::-webkit-scrollbar-thumb { background:var(--muted); }
+@supports not selector(::-webkit-scrollbar) { #chat-list { scrollbar-width:thin; scrollbar-color:transparent transparent; }.list-frame:hover #chat-list,.list-frame:focus-within #chat-list { scrollbar-color:var(--muted) var(--soft); } }
+.scroll-cue { position:absolute; inset-inline:0 14px; bottom:0; z-index:2; height:38px; display:flex; align-items:flex-end; justify-content:center; gap:5px; padding:0 0 4px; background:linear-gradient(to bottom,transparent,var(--bg) 65%); color:var(--accent); font-size:10px; }
+.scroll-cue:hover { color:var(--text); }.scroll-cue:focus-visible { outline-offset:-2px; }
+.scroll-cue svg { width:11px; height:11px; margin-bottom:2px; }
+.project-group + .project-group { margin-top:18px; }
+.project-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:11px 2px; position:sticky; top:0; z-index:1; background:var(--bg); border-bottom:1px solid var(--line); }
+.project-identity { min-width:0; }.project-heading { font-size:12px; font-weight:650; margin:0; overflow-wrap:anywhere; }.project-count,.project-path { color:var(--muted); font-size:10px; margin-top:2px; }.project-path { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.project-total { text-align:right; flex:none; font-variant-numeric:tabular-nums; }.project-total strong { display:block; font-size:13px; font-weight:600; }.project-total small { display:block; font-size:9px; color:var(--muted); }
+.project-group .chat { padding:12px 2px 12px 12px; }
+.chat { display:grid; grid-template-columns:minmax(0,1fr) auto 10px; align-items:center; gap:14px; padding:16px 2px; width:100%; text-align:left; border-bottom:1px solid var(--line); transition:background .15s; }.chat:hover { background:var(--soft); }.chat:last-child { border-bottom:0; }.chat svg { width:11px;height:11px;color:var(--muted);transition:transform .15s; }.chat:hover svg { transform:translateX(2px); }
+.chat-title { display:block; font-weight:560; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }.chat-meta { display:flex; flex-wrap:wrap; gap:3px 8px; margin-top:5px; color:var(--muted); font-size:10px; }.chat-project { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.working { color:var(--accent); }
+.row-usage { text-align:right; font-variant-numeric:tabular-nums; }.row-usage strong { display:block; font-size:16px; font-weight:580; letter-spacing:-.3px; }.row-usage small { font-size:10px; color:var(--muted); }.row-usage .partial { color:var(--warn); }
+.more { display:block; margin:16px auto 2px; font-size:12px; color:var(--accent); padding:6px 14px; }.empty { padding:40px 0; color:var(--muted); text-align:center; }.banner { color:var(--warn); background:var(--soft); padding:10px; margin-top:16px; border-radius:6px; font-size:12px; }
+footer { display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--line); padding-top:13px; margin-top:15px; font-size:10px; color:var(--muted); }
+#coverage-details { margin-top:12px; color:var(--muted); font-size:11px; } summary { cursor:pointer; width:max-content; } details p { margin:9px 0; }table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; font-size:10px; }th,td { padding:7px 6px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }th { color:var(--muted); font-weight:500; }th:first-child,td:first-child { text-align:left; }a { color:var(--accent); text-decoration:none; }a:hover { text-decoration:underline; }
+#detail-view { animation:enter .18s ease-out; }.back { display:inline-flex; align-items:center; gap:6px; padding:6px 0; color:var(--muted); font-size:12px; margin-top:20px; }.back:hover { color:var(--text); }.back svg { width:13px; }
+.detail-heading { margin:17px 0 0; }.detail-heading h2 { font-size:22px; line-height:1.3; letter-spacing:-.5px; font-weight:600; margin:0 0 6px; overflow-wrap:anywhere; }.detail-heading h2:focus { outline:none; }.project { font-size:11px; color:var(--muted); }.detail-hero { padding:21px 0 20px; }.detail-hero .value { font-size:38px; }.split { display:flex; gap:24px; flex-wrap:wrap; margin-top:15px; font-size:11px; color:var(--muted); }.split strong { font-weight:550; color:var(--text); margin-left:5px; }.breakdown-label { font-size:11px; color:var(--muted); border-block:1px solid var(--line); padding:10px 0; }
+.agent { padding:20px 0; border-bottom:1px solid var(--line); }.agent:last-child { border:0; }.agent-top { display:flex; justify-content:space-between; gap:16px; }.agent-name { font-size:14px; margin:0; font-weight:580; overflow-wrap:anywhere; }.role { display:block; color:var(--muted); font-size:10px; margin-bottom:3px; }.agent-usage { text-align:right; font-size:19px; font-weight:580; font-variant-numeric:tabular-nums; white-space:nowrap; }.agent-usage small { display:block; color:var(--muted); font-size:10px; font-weight:400; }.agent-settings { display:flex; flex-wrap:wrap; gap:5px 12px; font-size:11px; margin:9px 0 0; color:var(--muted); }.agent-settings b { color:var(--text); font-weight:500; }.activity { margin:12px 0 0; font-size:12px; }.activity time { display:block; color:var(--muted); font-size:10px; margin-top:3px; }.agent-summary { margin:8px 0 0; color:var(--muted); font-size:12px; line-height:1.65; overflow-wrap:anywhere; }.token-line { margin:10px 0 0; font-size:10px; color:var(--muted); }.agent-note { margin:8px 0 0; font-size:11px; color:var(--warn); }.usage-details { font-size:11px; margin-top:11px; color:var(--muted); }.usage-details table { margin-top:5px; }.usage-details summary { font-size:10px; }
+@keyframes spin { to { transform:rotate(360deg); } }@keyframes enter { from { opacity:.5;transform:translateX(5px); }to { opacity:1;transform:translateX(0); } }
+@media(max-width:500px) { main { padding:20px 18px 16px; }.value { font-size:40px; }.chat { gap:10px; }.row-usage strong { font-size:15px; }.agent-settings { gap:4px 10px; }.detail-heading h2 { font-size:20px; } }
+@media(max-width:360px) { .live span { display:none; }.actions { gap:8px; }.chat-title { font-size:12px; }.hero-top { gap:12px; }.allowance { max-width:124px; padding-inline-start:14px; }.allowance-window strong { font-size:19px; }.hero .value { font-size:36px; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
+</style></head><body>
+<main id="app" aria-label="Token usage">
+<div class="toolbar">
+<div class="period-picker" role="group" aria-label="Usage period"><button type="button" data-range="day" aria-pressed="true" title="Last 24 hours">Day</button><button type="button" data-range="week" aria-pressed="false" title="Last 7 days">Week</button><button type="button" data-range="month" aria-pressed="false" title="Last 30 days">Month</button><button type="button" data-range="all" aria-pressed="false" title="All recorded time">All time</button></div>
+<div class="actions"><label class="live"><input id="auto" type="checkbox" checked aria-label="Automatically refresh usage"><span>Live</span></label><button id="refresh" class="refresh" aria-label="Refresh usage"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 6M4 12l2 6a7 7 0 0 0 12-1"/></svg></button></div>
+</div>
+<div id="banner" class="banner" role="status" hidden></div>
+<div id="list-view"><section class="hero" aria-label="Total tokens"><div class="hero-top"><div class="hero-primary"><div id="total-label" class="kicker">Total tokens · last 24 hours</div><div class="value-row"><div id="total-value" class="value">—</div><span id="total-change" class="comparison" hidden></span></div></div><div id="allowance-view" class="allowance" role="group" aria-label="Account allowance"><div id="allowance-windows" class="allowance-windows"></div><span id="allowance-status" class="allowance-status" hidden></span><p id="allowance-note" class="allowance-note">Loading allowance…</p></div></div></section>
+<label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Find a chat or project" aria-label="Search chats" autocomplete="off"></label>
+<div class="list-head"><label class="group-toggle"><input id="group-projects" type="checkbox" checked>Group by project</label><div class="sort-picker" role="group" aria-label="Sort by"><button type="button" data-sort="recent" aria-pressed="true">Most recent</button><button type="button" data-sort="tokens" aria-pressed="false">Token usage</button></div></div><div id="list-summary" class="list-summary">Reading your local usage…</div><p id="ranking-note" class="ranking-note" hidden>Ranking covers the chats shown. Load more to include others.</p><div class="list-frame"><div id="chat-list" role="region" tabindex="0" aria-label="Chats by project" aria-describedby="list-summary"></div><button id="scroll-cue" class="scroll-cue" type="button" aria-label="More below: scroll down the chat list" aria-controls="chat-list" hidden>More below<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div><div id="empty" class="empty" hidden>No matching chats.</div><button id="more" class="more" hidden>Load more chats</button></div>
+<section id="detail-view" aria-labelledby="detail-title" hidden><button id="back" class="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6-6 6 6 6M4 12h16"/></svg>All chats</button><div class="detail-heading"><h2 id="detail-title" tabindex="-1"></h2><div id="detail-project" class="project"></div></div><div class="detail-hero"><div id="detail-label" class="kicker">Combined tokens · last 24 hours</div><div class="value-row"><div id="detail-value" class="value">—</div><span id="detail-change" class="comparison" hidden></span></div><div id="detail-note" class="hero-note"></div><div class="split"><span>Main agent<strong id="main-tokens">—</strong></span><span>Subagents<strong id="sub-tokens">—</strong></span></div></div><div class="breakdown-label">Agent breakdown · each agent’s own tokens</div><div id="agent-list"></div></section>
+<footer><span id="freshness">Connecting…</span></footer>
+<details id="coverage-details"><summary>How tokens are counted</summary><p>Total tokens = input + output. Cache reads and writes are included in input; reasoning is included in output. These are processed tokens across requests, so reused context can appear more than once.</p><p>Day, Week, and Month cover the last 24 hours, 7 days, and 30 days, using the timestamp of each usage record. Changes compare that window with the immediately preceding window of the same length: (current − previous) ÷ previous × 100. Chats with usage in either window are shown, including chats whose current usage is zero.</p><p>The overall total hides its comparison when the previous window has no recorded tokens. Chat and project rows also omit New when the previous total was zero. In the detail view, New means the previous window had zero tokens. No change means the totals are equal. Comparisons are unavailable if either window has incomplete usage. All time has no previous window. Hover over a change for the exact previous and current counts.</p><p>Project subtotals, comparisons and ranking include only the chats currently shown and their subagents. Project changes use combined totals, not an average of chat percentages. Load more chats to expand coverage.</p><p>Most recent ranks the latest chat activity first. Token usage ranks the largest current totals first. With grouping on, projects rank by their latest chat activity or combined tokens; chats within each project use the same order.</p><p>Account allowance comes from your local Codex sign-in and is shared across chats. Its reset windows are independent of these filters. Remaining allowance is 100% minus the reported percentage used; it cannot be converted into a remaining-token count. With Live enabled, allowance refreshes once a minute. Refresh also requests a new reading. Missing limits show as unavailable, older readings are labeled, and a reset is never assumed until a new reading arrives. Hover over the allowance for its reset countdown and exact local time.</p><p>Compact totals are rounded for readability. Hover over a total or open an agent’s breakdown for exact counts. A + marks a partial total; — means usage is unavailable.</p><p id="coverage"></p><p id="unlinked" hidden></p></details>
+</main>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id), pending=new Map();
+let nextID=0,ready=false,closed=false,busy=false,queued=false,list=null,detail=null,selected=null,limit=20,error='',listKey='',detailKey='',listScroll=0,range='day',debounce;
+let groupByProject=true,sortBy='recent';
+let allowance=null,allowanceBusy=false,allowanceAttempt=0,allowanceKey='';
+try { groupByProject=localStorage.getItem('token-usage.group-by-project')!=='false';sortBy=localStorage.getItem('token-usage.sort-by')==='tokens'?'tokens':'recent'; } catch {}
+$('group-projects').checked=groupByProject;
+function renderSort() { for(const button of document.querySelectorAll('[data-sort]'))button.setAttribute('aria-pressed',String(button.dataset.sort===sortBy)); }
+renderSort();
+function el(tag,cls,value='') { const n=document.createElement(tag);n.className=cls;n.textContent=value;return n; }
+const count=u=>!u || (!u.complete && u.tokens.total===0) ? '—' : tokens(u.tokens.total)+(u.complete?'':'+');
+function showCount(node,u) { node.textContent=count(u);node.title=u ? full(u.tokens.total)+' recorded tokens'+(u.complete?'':' · incomplete usage') : ''; }
+const rangeLabels={all:'all time',day:'last 24 hours',week:'last 7 days',month:'last 30 days'};
+const previousLabels={day:'previous 24 hours',week:'previous 7 days',month:'previous 30 days'};
+const tokens=n=>new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1}).format(n||0);
+const full=n=>new Intl.NumberFormat('en-US').format(n||0);
+function usageChange(current,previous) {
+  if(!previous)return null;
+  if(!current?.complete||!previous.complete)return {kind:'unavailable',percent:null};
+  const before=previous.tokens.total,after=current.tokens.total;
+  if(before===0)return {kind:after===0?'unchanged':'new',percent:null};
+  const percent=(after-before)/before*100;
+  return {kind:percent>0?'up':percent<0?'down':'unchanged',percent};
+}
+function showComparison(node,current,previous,{expanded=false,hideNew=false}={}) {
+  const change=usageChange(current,previous);node.hidden=!change||(hideNew&&change.kind==='new');node.replaceChildren();node.className='comparison';node.removeAttribute('title');node.removeAttribute('aria-label');
+  if(node.hidden)return;
+  node.classList.add(change.kind);
+  const magnitude=Math.abs(change.percent??0),percent=magnitude>0&&magnitude<.1?'<0.1':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(magnitude);
+  const label=change.kind==='up'?'↑ '+percent+'%':change.kind==='down'?'↓ '+percent+'%':change.kind==='new'?'New':change.kind==='unchanged'?'No change':expanded?'Comparison unavailable':'—';
+  const period=previousLabels[range],description=change.kind==='unavailable'?'Comparison unavailable: usage is incomplete in one or both periods.':(change.kind==='up'?percent+'% higher':change.kind==='down'?percent+'% lower':label)+' vs '+period+'. '+full(previous.tokens.total)+' previous tokens; '+full(current.tokens.total)+' current tokens.';
+  node.append(el('span','',label));if(expanded)node.append(el('small','','vs '+period));node.title=description;node.setAttribute('aria-label',description);
+}
+const effort=e=>({none:'None',minimal:'Minimal',low:'Low',medium:'Medium',high:'High',xhigh:'Extra high',max:'Maximum',ultra:'Ultra'})[e]||e;
+const modelLabel=m=>m.replace(/^gpt-/,'GPT-').replace(/\b(astra|sol|luna|terra)\b/g,s=>s[0].toUpperCase()+s.slice(1));
+function age(t) { const s=Math.max(0,Date.now()/1000-t);return s<5?'just now':s<60?Math.floor(s)+'s ago':s<3600?Math.floor(s/60)+'m ago':s<86400?Math.floor(s/3600)+'h ago':Math.floor(s/86400)+'d ago'; }
+function allowanceWindowLabel(minutes) {
+  if(!Number.isFinite(minutes)||minutes<=0)return 'Usage window';
+  if(minutes===10080)return 'Weekly';
+  if(minutes===1440)return 'Daily';
+  return minutes%1440===0?minutes/1440+'-day':minutes%60===0?minutes/60+'-hour':minutes+'-minute';
+}
+function resetCountdown(timestamp,now=Date.now()/1000) {
+  if(!Number.isFinite(timestamp)||timestamp<=0)return 'Reset time unavailable';
+  const seconds=timestamp-now;
+  if(seconds<=0)return 'Reset due · awaiting update';
+  const minutes=Math.ceil(seconds/60),days=Math.floor(minutes/1440),hours=Math.floor(minutes%1440/60),rest=minutes%60;
+  return 'Resets in '+(days?days+'d '+hours+'h':hours?hours+'h '+rest+'m':minutes+'m');
+}
+function allowanceWindowState(window,now=Date.now()/1000) {
+  const expired=Number.isFinite(window.resetsAt)&&window.resetsAt>0&&window.resetsAt<=now;
+  const remaining=!expired&&Number.isFinite(window.remainingPercent)?Math.min(100,Math.max(0,window.remainingPercent)):null;
+  return {expired,remaining,reset:resetCountdown(window.resetsAt,now)};
+}
+function renderAllowance() {
+  const now=Date.now()/1000,stale=allowance?.status==='stale'||(Number.isFinite(allowance?.observedAt)&&now-allowance.observedAt>120);
+  const windows=allowance?.windows||[],multiple=new Set(windows.map(w=>w.limitId)).size>1;
+  const status=stale?'Last known':'';
+  const note=!allowance?'Loading allowance…':windows.length?'':'Allowance unavailable';
+  const states=windows.map(w=>({...w,...allowanceWindowState(w,now)})),key=JSON.stringify([states,status,note]);
+  if(key===allowanceKey)return;allowanceKey=key;
+  $('allowance-view').classList.toggle('stale',!!stale);$('allowance-status').textContent=status;$('allowance-status').hidden=!status;
+  $('allowance-status').title=[Number.isFinite(allowance?.observedAt)?'Checked '+new Date(allowance.observedAt*1000).toLocaleString():'',allowance?.message||''].filter(Boolean).join(' · ');
+  $('allowance-note').textContent=note;$('allowance-note').hidden=!note;$('allowance-note').title=allowance?.message||'';
+  $('allowance-windows').replaceChildren(...states.map(w=>{
+    const row=el('span','allowance-window');
+    const label=(multiple?w.limitName+' · ':'')+allowanceWindowLabel(w.windowDurationMins)+' allowance';
+    const value=w.remaining===null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(w.remaining)+'% left';
+    const resetAt=Number.isFinite(w.resetsAt)&&w.resetsAt>0?new Date(w.resetsAt*1000).toLocaleString():'';
+    const description=label+': '+value+'. '+w.reset+(resetAt?' ('+resetAt+')':'')+'.';
+    row.title=description+'\nAccount-wide allowance, independent of the token period and chat filters.';
+    row.setAttribute('role','group');row.setAttribute('aria-label',description);
+    row.append(el('strong','',value),el('span','allowance-label',label));return row;
+  }));
+}
+async function refreshAllowance(force=false) {
+  if(closed||!ready||allowanceBusy||(!force&&Date.now()-allowanceAttempt<60000))return;
+  allowanceBusy=true;allowanceAttempt=Date.now();renderAllowance();
+  try {
+    const r=await request('tools/call',{name:'read_allowance',arguments:{refresh:force}});
+    if(r?.isError)throw new Error('Account allowance is unavailable.');
+    const value=r?.structuredContent??JSON.parse(r?.content?.find(c=>c.type==='text')?.text||'null');
+    if(!Array.isArray(value?.windows)||!['available','unavailable','stale'].includes(value.status))throw new Error('Account allowance is unavailable.');
+    allowance=value;
+  } catch {
+    allowance={...(allowance||{windows:[],observedAt:null}),status:allowance?.observedAt?'stale':'unavailable',message:'Could not refresh account allowance. Try Refresh.'};
+  } finally { allowanceBusy=false;renderAllowance(); }
+}
+function send(value) { if(window.parent!==window)window.parent.postMessage({jsonrpc:'2.0',...value},'*'); }
+function request(method,params) { return new Promise((resolve,reject)=>{if(window.parent===window){reject(new Error('Open this dashboard through the plugin preview.'));return;}const id=++nextID,timer=setTimeout(()=>{pending.delete(id);reject(new Error('The local reader did not respond. Try Refresh.'));},60000);pending.set(id,{resolve,reject,timer});send({id,method,params});}); }
+function payload(r) { if(r?.isError)throw new Error(r.content?.find(c=>c.type==='text')?.text||'Could not read usage.');let v=r?.structuredContent;if(!v){try{v=JSON.parse(r?.content?.find(c=>c.type==='text')?.text);}catch{}}if(!Array.isArray(v?.groups)||!v?.total?.tokens||v.period?.id!==range||(range!=='all'&&(!v.previousTotal?.tokens||!v.previousPeriod)))throw new Error('Usage data was incomplete.');return v; }
+function theme(c) { if(['dark','light'].includes(c?.theme))document.documentElement.dataset.theme=c.theme; }
+window.addEventListener('message',e=>{if(e.source!==window.parent||e.data?.jsonrpc!=='2.0')return;const m=e.data,p=pending.get(m.id);if(p){clearTimeout(p.timer);pending.delete(m.id);m.error?p.reject(new Error(m.error.message)):p.resolve(m.result);}else if(m.method==='ui/notifications/host-context-changed')theme(m.params);else if(m.method==='ui/resource-teardown'){closed=true;clearInterval(poll);clearInterval(clock);if(m.id!==undefined)send({id:m.id,result:{}});}});
+function coverage(v) { $('coverage').textContent=v.coverage;$('unlinked').hidden=!v.unlinkedSubagents;$('unlinked').textContent=v.unlinkedSubagents+' subagents without an available parent link are excluded from these totals.'; }
+function issue(u) { return u?.missingAgents ? u.missingAgents+' agent'+(u.missingAgents===1?'':'s')+' with incomplete usage' : ''; }
+function chatRow(g) {
+  const b=el('button','chat');b.type='button';b.dataset.id=g.id;
+  const name=el('div','');name.append(el('span','chat-title',g.title));
+  const meta=el('span','chat-meta');
+  if(!groupByProject) { const project=el('span','chat-project',g.project||'Other chats');project.title=g.projectKey||'No project folder';meta.append(project); }
+  if(g.subagentCount)meta.append(el('span','',g.subagentCount+' subagent'+(g.subagentCount===1?'':'s')));
+  if(g.workingAgents)meta.append(el('span','working',g.workingAgents+' working'));
+  if(meta.childElementCount)name.append(meta);
+  const usage=el('span','row-usage'),value=el('strong',g.usage.complete?'':'partial');showCount(value,g.usage);
+  usage.append(value,el('small',g.usage.complete?'':'partial',g.usage.complete?'tokens':g.usage.tokens.total?'Partial usage':'Unavailable'));
+  const change=el('span','comparison');showComparison(change,g.usage,g.previousUsage,{hideNew:true});usage.append(change);
+  b.append(name,usage,el('span','','›'));b.addEventListener('click',()=>open(g));return b;
+}
+function compareRank(a,b) {
+  return (sortBy==='tokens' ? b.usage.tokens.total-a.usage.tokens.total : 0)
+    || b.updatedAt-a.updatedAt || (a.id??a.key).localeCompare(b.id??b.key);
+}
+function groupProjects(chats) {
+  const projects=new Map();
+  for(const chat of chats) {
+    const key=chat.projectKey??chat.project??'';
+    if(!projects.has(key))projects.set(key,{key,name:chat.project||'Other chats',updatedAt:0,chats:[],usage:{tokens:{total:0},missingAgents:0,complete:true},previousUsage:chat.previousUsage?{tokens:{total:0},missingAgents:0,complete:true}:null});
+    const project=projects.get(key);project.chats.push(chat);
+    project.updatedAt=Math.max(project.updatedAt,chat.updatedAt);
+    project.usage.tokens.total+=chat.usage.tokens.total;
+    project.usage.missingAgents+=chat.usage.missingAgents;
+    project.usage.complete=project.usage.complete&&chat.usage.complete;
+    if(project.previousUsage&&chat.previousUsage) {
+      project.previousUsage.tokens.total+=chat.previousUsage.tokens.total;
+      project.previousUsage.missingAgents+=chat.previousUsage.missingAgents;
+      project.previousUsage.complete=project.previousUsage.complete&&chat.previousUsage.complete;
+    } else project.previousUsage=null;
+  }
+  return [...projects.values()].sort(compareRank);
+}
+function projectSection(project,index,duplicateName) {
+  const section=el('section','project-group'),heading=el('h2','project-heading',project.name);
+  heading.id='project-heading-'+index;heading.title=project.key||'No project folder';section.setAttribute('aria-labelledby',heading.id);
+  const header=el('div','project-header'),identity=el('div','project-identity');identity.append(heading);
+  if(duplicateName) { const path=el('div','project-path',project.key||'No project folder');path.title=path.textContent;identity.append(path); }
+  identity.append(el('div','project-count',project.chats.length+(project.chats.length===1?' chat shown':' chats shown')));
+  const total=el('div','project-total'),value=el('strong',project.usage.complete?'':'partial');showCount(value,project.usage);
+  const change=el('span','comparison');showComparison(change,project.usage,project.previousUsage,{hideNew:true});
+  total.append(value,el('small','',project.usage.complete?'subtotal':'partial subtotal'),change);header.append(identity,total);
+  section.append(header,...project.chats.map(chatRow));return section;
+}
+function focusChat(id) { if(id)[...$('chat-list').querySelectorAll('.chat')].find(b=>b.dataset.id===id)?.focus({preventScroll:true}); }
+function updateScrollCue() {
+  const scroller=$('chat-list');
+  $('scroll-cue').hidden=scroller.clientHeight===0||scroller.scrollHeight-scroller.clientHeight-Math.max(0,scroller.scrollTop)<=2;
+}
+function renderList() {
+  $('chat-list').setAttribute('aria-label',groupByProject?'Chats by project':'Chats');
+  requestAnimationFrame(updateScrollCue);
+  if(!list)return;coverage(list);showCount($('total-value'),list.total);
+  const previousTotal=list.previousTotal?.tokens.total>0?list.previousTotal:null;
+  showComparison($('total-change'),list.total,previousTotal,{expanded:true});
+  const chats=[...list.groups].sort(compareRank),projects=groupProjects(chats);
+  $('list-summary').textContent=list.loadedCount+($('search').value?' matching':'')+(list.loadedCount===1?' chat':' chats')+' · '+projects.length+(projects.length===1?' project':' projects')+(issue(list.total)?' · '+issue(list.total):'');
+  $('list-summary').title='Totals cover the chats currently shown and all their linked subagents.';
+  $('list-summary').className='list-summary'+(list.total.complete?'':' partial');
+  const key=JSON.stringify([groupByProject,sortBy,list.groups]);
+  if(key!==listKey) {
+    const focus=document.activeElement?.dataset.id,scroll=$('chat-list').scrollTop;
+    const names=new Map();for(const p of projects)names.set(p.name,(names.get(p.name)||0)+1);
+    const rows=groupByProject ? projects.map((p,i)=>projectSection(p,i,names.get(p.name)>1)) : chats.map(chatRow);
+    $('chat-list').replaceChildren(...rows);
+    $('chat-list').scrollTop=scroll;listKey=key;focusChat(focus);
+  }
+  $('empty').textContent=range==='all'?'No matching chats.':$('search').value?'No matching chats in these periods.':'No recorded usage in either period.';
+  $('empty').hidden=list.groups.length>0;$('more').hidden=list.loadedCount>=list.matchingCount||limit>=200;
+  $('ranking-note').hidden=list.loadedCount>=list.matchingCount;
+  $('ranking-note').textContent=limit<200?'Ranking covers the chats shown. Load more to include others.':'Ranking covers the 200 chats shown. Search or choose a shorter period to narrow the list.';
+  $('more').textContent='Load more · '+list.loadedCount+' of '+list.matchingCount;
+}
+function usageRows(a) {
+  const d=el('details','usage-details');d.append(el('summary','','Token breakdown'));
+  const table=el('table',''),head=el('tr','');for(const label of ['Type','Tokens'])head.append(el('th','',label));
+  const thead=el('thead','');thead.append(head);table.append(thead);
+  const body=el('tbody',''),u=a.usage.tokens;
+  for(const [name,n] of [['Input (uncached)',u.input-u.cached-u.cacheWrite],['Cached input',u.cached],['Cache writes',u.cacheWrite],['Output, incl. reasoning',u.output],['Total',u.total]]) {
+    const row=el('tr','');row.append(el('td','',name),el('td','',full(n)));body.append(row);
+  }
+  table.append(body);d.append(table,el('p','','Reasoning: '+full(u.reasoning)+' tokens, already included in output.'));
+  if(a.models.length>1)d.append(el('p','','Usage by model: '+a.models.map(m=>modelLabel(m.model)+' · '+full(m.usage.tokens.total)+' tokens').join('; ')));
+  return d;
+}
+function agentRow(a) { const article=el('article','agent');article.dataset.id=a.id;const top=el('div','agent-top'),identity=el('div','');identity.append(el('span','role',a.depth===0?'Parent chat':a.depth===1?'Subagent':'Subagent · depth '+a.depth),el('h3','agent-name',a.name));const amount=el('span','agent-usage'+(a.usage.complete?'':' partial')),value=el('span','');showCount(value,a.usage);const change=el('span','comparison');showComparison(change,a.usage,a.previousUsage);amount.append(value,el('small','','tokens'),change);top.append(identity,amount);article.append(top);const settings=el('div','agent-settings');for(const [label,value] of [['Model',modelLabel(a.model)],['Effort',effort(a.effort)]]){const part=el('span','',label+' ');part.append(el('b','',value));settings.append(part);}settings.append(el('span',['Working','Waiting'].includes(a.status)?'working':'',a.status));article.append(settings);if(a.depth>0&&a.title!==a.name&&a.title!=='Untitled chat')article.append(el('p','agent-summary',a.title));const activity=el('p','activity',a.activity);if(a.activityAt){const time=el('time','','Last recorded '+age(a.activityAt));time.dateTime=new Date(a.activityAt*1000).toISOString();activity.append(time);}article.append(activity);if(a.summary)article.append(el('p','agent-summary',a.summary));article.append(el('p','token-line',tokens(a.usage.tokens.input)+' input · '+tokens(a.usage.tokens.output)+' output'));if(a.note)article.append(el('p','agent-note',a.note));article.append(usageRows(a));return article; }
+function renderDetail() {
+  if(!detail?.groups?.[0])return;const g=detail.groups[0];coverage(detail);
+  $('detail-title').textContent=g.title;$('detail-project').textContent=g.project||'Local chat';showCount($('detail-value'),g.usage);
+  showComparison($('detail-change'),g.usage,g.previousUsage,{expanded:true});
+  $('detail-note').textContent=full(g.usage.tokens.total)+' recorded tokens · '+(g.subagentCount+1)+' agent'+(g.subagentCount?'s':'')+(issue(g.usage)?' · '+issue(g.usage):'');
+  $('detail-note').className='hero-note'+(g.usage.complete?'':' partial');showCount($('main-tokens'),g.agents[0].usage);
+  const subs=g.agents.slice(1).reduce((s,a)=>({tokens:{total:s.tokens.total+a.usage.tokens.total},complete:s.complete&&a.usage.complete}),{tokens:{total:0},complete:true});showCount($('sub-tokens'),subs);
+  const key=JSON.stringify(g.agents);
+  if(key!==detailKey) {
+    const focused=document.activeElement?.tagName==='SUMMARY'?document.activeElement.closest('.agent')?.dataset.id:null;
+    const expanded=new Set([...$('agent-list').children].filter(n=>n.querySelector('details')?.open).map(n=>n.dataset.id));
+    $('agent-list').replaceChildren(...g.agents.map(agentRow));
+    for(const n of $('agent-list').children)if(expanded.has(n.dataset.id))n.querySelector('details').open=true;
+    if(focused)[...$('agent-list').children].find(n=>n.dataset.id===focused)?.querySelector('summary')?.focus({preventScroll:true});detailKey=key;
+  }
+}
+function render() { $('banner').hidden=!error;$('banner').textContent=error?((selected?detail:list)?'Showing the last reading. ':'')+error:'';$('list-view').hidden=!!selected;$('detail-view').hidden=!selected;if(selected)renderDetail();else renderList();freshness(); }
+function freshness() { const v=selected?detail:list;$('freshness').textContent=busy?'Reading usage…':v?(error?'Last read ':$('auto').checked?'Updated ':'Paused · updated ')+age(v.observedAt):'Waiting for usage'; }
+function viewKey() { return range+':'+(selected||'list:'+limit+':'+$('search').value); }
+function setRange(next) {
+  if(next===range)return;range=next;limit=20;list=null;detail=null;listKey='';detailKey='';listScroll=0;error='';
+  for(const button of document.querySelectorAll('[data-range]'))button.setAttribute('aria-pressed',String(button.dataset.range===range));
+  $('total-label').textContent='Total tokens · '+rangeLabels[range];$('detail-label').textContent='Combined tokens · '+rangeLabels[range];
+  for(const id of ['total-value','detail-value','main-tokens','sub-tokens']) { $(id).textContent='—';$(id).removeAttribute('title'); }
+  showComparison($('total-change'),null,null);showComparison($('detail-change'),null,null);
+  $('list-summary').textContent='Reading usage for this period…';$('detail-note').textContent='Reading usage for this period…';
+  $('chat-list').replaceChildren();$('agent-list').replaceChildren();$('more').hidden=true;$('empty').hidden=true;$('ranking-note').hidden=true;
+  render();refresh();
+}
+async function refresh() { if(closed)return;if(!ready){initialize();return;}if(busy){queued=true;return;}busy=true;$('refresh').disabled=true;$('refresh').classList.add('busy');freshness();const key=viewKey();try{const r=await request('tools/call',selected?{name:'read_usage_detail',arguments:{thread_id:selected,range}}:{name:'list_usage',arguments:{query:$('search').value.trim(),limit,range}});const current=viewKey();if(key!==current){queued=true;return;}const v=payload(r);if(selected){if(v.groups[0]?.id!==selected)throw new Error('The selected chat is unavailable.');detail=v;}else list=v;error='';render();}catch(e){if(key===viewKey()){error=e.message;render();}}finally{busy=false;$('refresh').disabled=false;$('refresh').classList.remove('busy');freshness();if(queued){queued=false;refresh();}} }
+function open(g) { listScroll=$('chat-list').scrollTop;selected=g.id;detail=null;detailKey='';error='';$('detail-title').textContent=g.title;$('detail-project').textContent=g.project;showCount($('detail-value'),g.usage);showComparison($('detail-change'),g.usage,g.previousUsage,{expanded:true});$('detail-note').textContent='Reading agent breakdown…';$('main-tokens').textContent='—';$('sub-tokens').textContent='—';$('agent-list').replaceChildren();render();$('detail-title').focus({preventScroll:true});refresh(); }
+function back() { const id=selected;selected=null;error='';render();$('chat-list').scrollTop=listScroll;focusChat(id);refresh(); }
+let initializing=false;
+async function initialize(){if(initializing||ready||closed)return;initializing=true;try{const host=await request('ui/initialize',{appInfo:{name:'cost-calculator',version:'0.7.8'},appCapabilities:{},protocolVersion:'2026-01-26'});theme(host?.hostContext);send({method:'ui/notifications/initialized',params:{}});ready=true;refreshAllowance();refresh();}catch(e){error=e.message;render();}finally{initializing=false;}}
+$('scroll-cue').onclick=event=>{event.stopPropagation();const scroller=$('chat-list');scroller.focus({preventScroll:true});scroller.scrollBy({top:Math.max(1,Math.round(scroller.clientHeight*.7)),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});};
+$('chat-list').addEventListener('scroll',updateScrollCue,{passive:true});
+new ResizeObserver(updateScrollCue).observe($('chat-list'));
+for(const button of document.querySelectorAll('[data-range]'))button.onclick=()=>setRange(button.dataset.range);
+$('group-projects').onchange=()=>{groupByProject=$('group-projects').checked;try{localStorage.setItem('token-usage.group-by-project',String(groupByProject));}catch{}listScroll=0;renderList();$('chat-list').scrollTop=0;};
+for(const button of document.querySelectorAll('[data-sort]'))button.onclick=()=>{if(sortBy===button.dataset.sort)return;sortBy=button.dataset.sort;renderSort();try{localStorage.setItem('token-usage.sort-by',sortBy);}catch{}listScroll=0;renderList();$('chat-list').scrollTop=0;};
+$('refresh').onclick=()=>{refreshAllowance(true);refresh();};$('back').onclick=back;$('more').onclick=()=>{limit=Math.min(200,limit+20);refresh();};$('search').oninput=()=>{limit=20;clearTimeout(debounce);debounce=setTimeout(refresh,250);};$('auto').onchange=()=>{freshness();if($('auto').checked){refreshAllowance();refresh();}};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&selected){e.preventDefault();back();}});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('auto').checked){refreshAllowance();refresh();}});
+const poll=setInterval(()=>{if(!document.hidden&&$('auto').checked){refreshAllowance();if(!busy)refresh();}},5000),clock=setInterval(()=>{freshness();renderAllowance();},1000);let height=0;new ResizeObserver(()=>{const next=Math.ceil($('app').getBoundingClientRect().height);if(next!==height){height=next;send({method:'ui/notifications/size-changed',params:{height}});}}).observe($('app'));initialize();
+})();
+</script></body></html>
