@@ -4,7 +4,7 @@ import CoreFoundation
 typealias JSON = [String: Any]
 
 @main final class PluginServer {
-    static let version = "0.7.8"
+    static let version = "0.7.9"
     static let uri = "ui://cost-calculator/calculator-v1.html"
     static let mime = "text/html;profile=mcp-app"
     var initialized = false
