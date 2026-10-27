@@ -30,7 +30,7 @@ with tempfile.TemporaryDirectory(prefix='cost-mcp-', dir='/private/tmp') as home
 responses = [json.loads(line) for line in process.stdout.splitlines()]
 assert [r['id'] for r in responses] == list(range(len(requests)))
 assert responses[0]['error']['code'] == -32000
-assert responses[1]['result']['serverInfo'] == {'name': 'cost-calculator', 'version': '0.7.8'}
+assert responses[1]['result']['serverInfo'] == {'name': 'cost-calculator', 'version': '0.7.9'}
 tools = responses[2]['result']['tools']
 assert [tool['name'] for tool in tools] == ['show_calculator', 'list_usage', 'read_usage_detail', 'read_allowance']
 assert tools[-1]['annotations']['readOnlyHint'] and tools[-1]['annotations']['openWorldHint']
