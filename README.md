@@ -1,4 +1,8 @@
-# Token Usage
+<p align="center">
+  <img src="Plugin/assets/icon-chat-coin.png" alt="Token Usage icon" width="144" height="144">
+</p>
+
+<h1 align="center">Token Usage</h1>
 
 An independent local Codex plugin showing tokens used by chats and their task subagents, plus the account’s remaining usage allowance. The package retains its `cost-calculator` identity; no currency estimates are calculated.
 
